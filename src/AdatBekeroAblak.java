@@ -24,9 +24,11 @@ public class AdatBekeroAblak extends JFrame {
         
 
  
-        layout.setVerticalGroup(layout.createParallelGroup(CENTER)
+        layout.setVerticalGroup(
+      		  layout.createSequentialGroup()
+      		  		.addGroup(
                 .addComponent(label)
-                .addComponent(textField)
+                .addComponent(textField))
                 .addComponent(findButton)
                 .addComponent(cancelButton));
         
