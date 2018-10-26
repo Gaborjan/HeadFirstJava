@@ -40,6 +40,7 @@ public class AdatBekeres extends JFrame {
                 
         panelMezok.add(BorderLayout.WEST,labelBox);
         panelMezok.add(BorderLayout.EAST,mezoBox);
+        panelMezok.add(new JSeparator(), BorderLayout.CENTER);
         panelMezok.add(BorderLayout.SOUTH,gombBox);
  
         getContentPane().add(panelMezok);
