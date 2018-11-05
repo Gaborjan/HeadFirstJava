@@ -15,9 +15,11 @@ public class BeatBox {
 	JFrame theFrame;
 	//Ezek a hangszerek nevei String tömbként, a grafikus felületen (egy-egy sorban) megjelenő szövegcímkék számára
 	String[] instrumentNames= {"Bass Drum","Closed Hi-Hat", "Open Hi-Hat","Aqoustic Snare","Crash Cymbal",
-			"Hand Clap","High Tom","Hi Bongo","Maracas","Whistle","Low Conga","Cowbell","Vibraslap",
+			"Hand Clap","High Tom","Hi Bongo","Maracas","Open Triangle","Low Conga","Cowbell","Vibraslap",
 			"Low-mid Tom","High Agogo","Open Hi Conga"};
-	int[] instruments= {35,42,46,38,49,39,50,60,70,72,64,56,58,47,67,63};
+	int[] instruments= {35,42,46,38,49,39,50,60,70,
+			81,
+			64,56,58,47,67,63};
 	
 	public static void main(String[] args) {
 		new BeatBox().buildGUI();
@@ -30,42 +32,60 @@ public class BeatBox {
 		JPanel background = new JPanel(layout);
 		//Az "üres szegély" margót biztosít a panel széla és az összetevők között - pusztán a vonzóbb 
 		//látvány kedvéért
-		background.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
-		checkboxList=new ArrayList<JCheckBox>();
+		background.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		theFrame.getContentPane().add(background);
+				
 		Box buttonBox=new Box(BoxLayout.Y_AXIS);
+		
+		buttonBox.add(Box.createVerticalGlue());
 		
 		JButton start=new JButton("Start");
 		start.addActionListener(new MyStartListener());
 		buttonBox.add(start);
 		
+		buttonBox.add(Box.createVerticalGlue());
+		
 		JButton stop=new JButton("Stop");
 		stop.addActionListener(new MyStopListener());
 		buttonBox.add(stop);
 		
-		JButton upTempo=new JButton("Tempo Up");
+		buttonBox.add(Box.createVerticalGlue());
+		
+		JButton upTempo=new JButton("Tempo (1,00) Up");
 		upTempo.addActionListener(new MyUpTempoListener());
 		buttonBox.add(upTempo);
 		
-		JButton downTempo=new JButton("Tempo Down");
+		buttonBox.add(Box.createVerticalGlue());
+		
+		JButton downTempo=new JButton("Tempo (1,00) Down");
 		downTempo.addActionListener(new MyDownTempoListener());
 		buttonBox.add(downTempo);
+		
+		buttonBox.add(Box.createVerticalGlue());
+		
+		JButton eraseMusic=new JButton("Erase Music");
+		eraseMusic.addActionListener(new MyEraseMusicListener());
+		buttonBox.add(eraseMusic);
+		
+		buttonBox.add(Box.createVerticalGlue());
+		
+		JButton randomMusic=new JButton("Random music");
+		randomMusic.addActionListener(new MyRandomMusicListener());
+		buttonBox.add(randomMusic);
+		
+		buttonBox.add(Box.createVerticalGlue());
 		
 		Box nameBox=new Box(BoxLayout.Y_AXIS);
 		for (int i=0;i<16;i++) {
 			nameBox.add(new Label(instrumentNames[i]));
 		}
-		
-		background.add(BorderLayout.EAST,buttonBox);
-		background.add(BorderLayout.WEST,nameBox);
-		
-		theFrame.getContentPane().add(background);
-		
+				
 		GridLayout grid=new GridLayout(16,16);
 		grid.setVgap(1);
 		grid.setHgap(2);
 		JPanel mainPanel=new JPanel(grid);
-		background.add(BorderLayout.CENTER,mainPanel);
+		checkboxList=new ArrayList<JCheckBox>();
 		
 		for (int i=0;i<256;i++) {
 			JCheckBox c=new JCheckBox();
@@ -73,6 +93,10 @@ public class BeatBox {
 			checkboxList.add(c);
 			mainPanel.add(c);
 		}
+		
+		background.add(BorderLayout.EAST,buttonBox);
+		background.add(BorderLayout.WEST,nameBox);
+		background.add(BorderLayout.CENTER,mainPanel);
 		
 		setUpMidi();
 		
@@ -132,23 +156,87 @@ public class BeatBox {
 	public class MyStopListener implements ActionListener {
 		public void actionPerformed(ActionEvent a) {
 			sequencer.stop();
+			refreshSpeedButtons();
 		}
 	}
 	
 	public class MyUpTempoListener implements ActionListener {
 		public void actionPerformed(ActionEvent a) {
 			float tempoFactor=sequencer.getTempoFactor();
-			sequencer.setTempoFactor((float) (tempoFactor*1.03));
+			if (tempoFactor<3) {
+				sequencer.setTempoFactor((float) (tempoFactor*1.03));
+				refreshSpeedButtons();  
+			}
 		}
 	}
 	
 	public class MyDownTempoListener implements ActionListener {
 		public void actionPerformed(ActionEvent a ) {
 			float tempoFactor=sequencer.getTempoFactor();
-			sequencer.setTempoFactor((float) (tempoFactor*0.97));
+			if (tempoFactor>0.5) {
+				sequencer.setTempoFactor((float) (tempoFactor*0.97));
+				refreshSpeedButtons();   			
+			}
 		}
 	}
 	
+	public class MyRandomMusicListener implements ActionListener {
+		public void actionPerformed(ActionEvent a ) {
+			Random rand = new Random();
+			sequencer.stop();
+			eraseCheckboxList();
+			int randomNum;
+			int fill;
+			for (int i=0;i<256;i++) {
+				fill=rand.nextInt((100-0)+1)+1;
+				if ((fill % 6) ==0) {
+   				randomNum = rand.nextInt((1 - 0) + 1) + 0;
+   				if (randomNum==0) 
+   					checkboxList.get(i).setSelected(false);
+   				else 
+   					checkboxList.get(i).setSelected(true);
+				}
+			}
+		}
+	}
+	
+	public class MyEraseMusicListener implements ActionListener {
+		public void actionPerformed(ActionEvent a ) {
+			sequencer.stop();
+			eraseCheckboxList();
+			sequencer.setTempoFactor(1);
+			refreshSpeedButtons();
+		}
+	}
+	
+	
+	public void eraseCheckboxList() {
+		for (int i=0;i<256;i++) {
+			checkboxList.get(i).setSelected(false);
+		}
+	}
+	
+	public void refreshSpeedButtons() {
+		String bText;
+		bText=String.format("Tempo (%2.2f) Up",sequencer.getTempoFactor());
+		((JButton) (
+			((Box) (
+				((JPanel) theFrame.getContentPane().getComponent(0)) //background 
+				.getComponent(0))) //buttonBox
+			.getComponent(5))) //downTempo button
+		.setText(bText); 
+		bText=String.format("Tempo (%2.2f) Down",sequencer.getTempoFactor());
+		((JButton) (
+				((Box) (
+					((JPanel) theFrame.getContentPane().getComponent(0)) //background 
+					.getComponent(0))) //buttonBox
+				.getComponent(7))) //downTempo button
+			.setText(bText);
+		
+		/*JPanel c=((JPanel) theFrame.getContentPane().getComponent(0));
+		Box b=(Box)c.getComponent(0);
+		((JButton) (b.getComponent(7))).setText("HELLO");*/
+	}
 	
 	public void makeTracks(int[] list) {
 		for (int i=0;i<16;i++) {
