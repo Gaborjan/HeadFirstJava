@@ -3,6 +3,8 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+
 import javax.swing.*;
 import static javax.swing.GroupLayout.Alignment.*;
  
@@ -18,29 +20,40 @@ public class AdatBekeres extends JFrame {
         JPanel panelMezok = new JPanel(layout);
         JPanel panelGombok = new JPanel();
         JButton OkButton = new JButton("Ok");
+        JButton CancelButton = new JButton("Cancel");
         
-        Box labelBox = new Box(BoxLayout.Y_AXIS);
- 
+        Box labelBox = new Box(BoxLayout.PAGE_AXIS);
         labelBox.add(lNev);
+        labelBox.add(Box.createRigidArea(new Dimension(0, 15)));
         labelBox.add(lCim);
+        labelBox.add(Box.createRigidArea(new Dimension(0, 15)));
         labelBox.add(lANeve);
+       
         
-        Box mezoBox = new Box(BoxLayout.Y_AXIS);
+        Box mezoBox = new Box(BoxLayout.PAGE_AXIS);
        
         mezoBox.add(tNev);
+        mezoBox.add(Box.createRigidArea(new Dimension(0, 10)));
         mezoBox.add(tCim);
+        mezoBox.add(Box.createRigidArea(new Dimension(0, 10)));
         mezoBox.add(tANeve);
        
         
-        Box gombBox = new Box(BoxLayout.Y_AXIS);
-         
+        Box gombBox = new Box(BoxLayout.LINE_AXIS);
+        gombBox.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
+        gombBox.add(Box.createHorizontalGlue()); 
+        //OkButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         gombBox.add(OkButton);
+        gombBox.add(Box.createRigidArea(new Dimension(10, 0)));
+        //CancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        gombBox.add(CancelButton);
+        gombBox.add(Box.createHorizontalGlue());
                
         panelMezok.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
                 
         panelMezok.add(BorderLayout.WEST,labelBox);
         panelMezok.add(BorderLayout.EAST,mezoBox);
-        panelMezok.add(new JSeparator(), BorderLayout.CENTER);
+        //panelMezok.add(new JSeparator(), BorderLayout.CENTER);
         panelMezok.add(BorderLayout.SOUTH,gombBox);
  
         getContentPane().add(panelMezok);
