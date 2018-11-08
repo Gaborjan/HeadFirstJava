@@ -23,6 +23,22 @@ public class BeatBox {
 	int[] instruments= {35,42,46,38,49,39,50,60,70,81,64,56,58,47,67,63}; 
 	
 	public static void main(String[] args) {
+	try {
+            // Set System L&F
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } 
+    catch (UnsupportedLookAndFeelException e) {
+       // handle exception
+    }
+    catch (ClassNotFoundException e) {
+       // handle exception
+    }
+    catch (InstantiationException e) {
+       // handle exception
+    }
+    catch (IllegalAccessException e) {
+       // handle exception
+    }
 		new BeatBox().buildGUI();
 	} //main
 	
@@ -45,7 +61,7 @@ public class BeatBox {
 		
 		//A középső, grid elrendezésű rész létrehozása és feltöltése checkbox-okkal
 		GridLayout grid=new GridLayout(16,16);
-		grid.setVgap(1);
+		grid.setVgap(0);
 		grid.setHgap(2);
 		mainPanel=new JPanel(grid);
 		checkboxList=new ArrayList<JCheckBox>();
@@ -95,6 +111,12 @@ public class BeatBox {
 		JButton randomMusic=new JButton("Random music");
 		randomMusic.addActionListener(new MyRandomMusicListener());
 		buttonBox.add(randomMusic);
+		
+		buttonBox.add(Box.createVerticalGlue());
+		
+		JButton mentesGomb=new JButton("Mentés");
+		mentesGomb.addActionListener(new MyMentesGombListener());
+		buttonBox.add(mentesGomb);
 		
 		buttonBox.add(Box.createVerticalGlue());
 		
@@ -293,5 +315,14 @@ public class BeatBox {
 		catch (Exception e) {e.printStackTrace();}
 		return event;
 	} //makeEvent
+	
+	public	class MyMentesGombListener implements ActionListener {
+		public void actionPerformed(ActionEvent a ) {
+			sequencer.stop();
+			JFileChooser fajlValasztoAblak = new JFileChooser();
+			fajlValasztoAblak.showSaveDialog(theFrame);
+		}
+	} //MyMentesGombListener class
+	
 } //BeatBox
 
