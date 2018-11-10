@@ -3,6 +3,7 @@ import javax.swing.*;
 import javax.sound.midi.*;
 import java.util.*;
 import java.awt.event.*;
+import java.io.*;
 
 
 public class BeatBox {
@@ -23,22 +24,21 @@ public class BeatBox {
 	int[] instruments= {35,42,46,38,49,39,50,60,70,81,64,56,58,47,67,63}; 
 	
 	public static void main(String[] args) {
-	try {
-            // Set System L&F
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } 
-    catch (UnsupportedLookAndFeelException e) {
-       // handle exception
-    }
-    catch (ClassNotFoundException e) {
-       // handle exception
-    }
-    catch (InstantiationException e) {
-       // handle exception
-    }
-    catch (IllegalAccessException e) {
-       // handle exception
-    }
+   	try {
+   		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+       } 
+       catch (UnsupportedLookAndFeelException e) {
+          // handle exception
+       }
+       catch (ClassNotFoundException e) {
+          // handle exception
+       }
+       catch (InstantiationException e) {
+          // handle exception
+       }
+       catch (IllegalAccessException e) {
+          // handle exception
+       }
 		new BeatBox().buildGUI();
 	} //main
 	
@@ -114,7 +114,7 @@ public class BeatBox {
 		
 		buttonBox.add(Box.createVerticalGlue());
 		
-		JButton mentesGomb=new JButton("Mentés");
+		JButton mentesGomb=new JButton("Save");
 		mentesGomb.addActionListener(new MyMentesGombListener());
 		buttonBox.add(mentesGomb);
 		
@@ -318,9 +318,13 @@ public class BeatBox {
 	
 	public	class MyMentesGombListener implements ActionListener {
 		public void actionPerformed(ActionEvent a ) {
+			File givenFile;
 			sequencer.stop();
 			JFileChooser fajlValasztoAblak = new JFileChooser();
 			fajlValasztoAblak.showSaveDialog(theFrame);
+			givenFile=fajlValasztoAblak.getSelectedFile();
+			System.out.println(givenFile.getName());
+			
 		}
 	} //MyMentesGombListener class
 	

@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Jatekos {
+public class Jatekos implements Serializable {
 	
 	static int jatekosDb=0;
 	
