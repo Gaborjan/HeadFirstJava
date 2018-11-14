@@ -1,0 +1,8 @@
+/**
+ * 
+ */
+/**
+ * @author janvarigabor
+ *
+ */
+package Tanulokartya;
