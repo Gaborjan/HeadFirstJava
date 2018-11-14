@@ -2,19 +2,24 @@ package Tanulokartya;
 
 import java.util.*;
 import java.awt.event.*;
-import javax.swing.*;
 
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
+import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.media.*;
+
 public class QuizCardPlayer {
-	private JTextArea				 display;
+	private JTextArea display;
 	private ArrayList<QuizCard> cardList;
-	private QuizCard				 currentCard;
-	private int						 currentCardIndex;
-	private JFrame					 frame;
-	private JButton				 nextButton;
-	private boolean				 isShowAnswer;
+	private QuizCard currentCard;
+	private int currentCardIndex;
+	private JFrame frame;
+	private JButton nextButton;
+	private boolean isShowAnswer;
 
 	public static void main(String[] args) {
 		try {
@@ -36,10 +41,9 @@ public class QuizCardPlayer {
 		frame = new JFrame("Quiz Card Player");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel mainPanel = new JPanel();
-		
-		Font bigFont = new Font("Arial CE", Font.ITALIC, 24);
-			
-		
+
+		Font bigFont = new Font("Sanserif", Font.ITALIC, 24);
+
 		display = new JTextArea(10, 20);
 		display.setFont(bigFont);
 
@@ -52,11 +56,18 @@ public class QuizCardPlayer {
 		qScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 		nextButton = new JButton("Show Answer");
-		nextButton.setPreferredSize(new Dimension(120,30));
+		nextButton.setPreferredSize(new Dimension(120, 30));
 		nextButton.setEnabled(false);
+
+		JButton playButton = new JButton("Play");
+		playButton.setPreferredSize(new Dimension(120, 30));
+		playButton.setEnabled(true);
+
 		mainPanel.add(qScroller);
 		mainPanel.add(nextButton);
+		mainPanel.add(playButton);
 		nextButton.addActionListener(new NextCardListener());
+		playButton.addActionListener(new PlayButtonListener());
 
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
@@ -66,8 +77,10 @@ public class QuizCardPlayer {
 		menuBar.add(fileMenu);
 		frame.setJMenuBar(menuBar);
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
-		frame.setSize(640, 500);
+		frame.setSize(700, 450);
+		frame.pack();
 		frame.setVisible(true);
+
 	} // go
 
 	public class NextCardListener implements ActionListener {
@@ -97,6 +110,16 @@ public class QuizCardPlayer {
 		}
 	} // OpenMenuListener
 
+	public class PlayButtonListener implements ActionListener {
+		boolean playCompleted = false;
+		public void actionPerformed(ActionEvent ev) {
+			JFXPanel p = new javafx.embed.swing.JFXPanel();
+			String uriString = new File("Beep.mp3").toURI().toString();
+			MediaPlayer player = new MediaPlayer(new Media(uriString));
+			player.play();
+		}
+	}
+
 	private void loadFile(File file) {
 		cardList = new ArrayList<QuizCard>();
 		try {
@@ -111,19 +134,17 @@ public class QuizCardPlayer {
 			System.out.println("Couldn't read the card file!");
 			ex.printStackTrace();
 		}
-		currentCardIndex=0;
+		currentCardIndex = 0;
 		showNextCard();
 	}// loadFile
 
 	private void makeCard(String lineToParse) {
 		String[] result = lineToParse.split(";");
-		if (result.length==2) {
+		if (result.length == 2) {
 			QuizCard card = new QuizCard(result[0], result[1]);
 			cardList.add(card);
 			System.out.println("Made a card.");
-		}
-		else
-		{
+		} else {
 			QuizCard card = new QuizCard("NULL", "NULL");
 			cardList.add(card);
 			System.out.println("No text in the current line!");
