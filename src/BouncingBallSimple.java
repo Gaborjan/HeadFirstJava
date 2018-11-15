@@ -17,6 +17,19 @@ public class BouncingBallSimple extends JPanel {
    private float ballY = ballRadius + 20; 
    private float ballSpeedX = 3;   // Ball's speed for x and y
    private float ballSpeedY = 2;
+   
+   //Color properties
+   
+   private int R = 0;
+   private int G = 0;
+   private int B = 0;
+   private Color bColor= new Color(R,G,B);
+   private double rPhase = 0;
+   private double gPhase = 0;
+   private double bPhase = 0;
+   private int bColorTiming = 0;
+   private String s="";
+   
   
    private static final int UPDATE_RATE = 30; // Number of refresh per second
   
@@ -28,7 +41,11 @@ public class BouncingBallSimple extends JPanel {
       Thread gameThread = new Thread() {
          public void run() {
             while (true) { // Execute one update step
-               // Calculate the ball's new position
+            	if ((ballX % 1) == 0) {
+            		makeColor();
+            		bColor = new Color(R,G,B);
+            	}
+            	// Calculate the ball's new position
                ballX += ballSpeedX;
                ballY += ballSpeedY;
                // Check if the ball moves over the bounds
@@ -70,7 +87,7 @@ public class BouncingBallSimple extends JPanel {
       g.fillRect(0, 0, BOX_WIDTH, BOX_HEIGHT);
   
       // Draw the ball
-      g.setColor(Color.BLUE);
+      g.setColor(bColor);
       g.fillOval((int) (ballX - ballRadius), (int) (ballY - ballRadius),
             (int)(2 * ballRadius), (int)(2 * ballRadius));
   
@@ -79,11 +96,28 @@ public class BouncingBallSimple extends JPanel {
       g.setFont(new Font("Courier New", Font.PLAIN, 12));
       StringBuilder sb = new StringBuilder();
       Formatter formatter = new Formatter(sb);
-      formatter.format("Ball @(%3.0f,%3.0f) Speed=(%2.0f,%2.0f)", ballX, ballY,
-            ballSpeedX, ballSpeedY);
+      formatter.format("Ball @(%3.0f,%3.0f) Speed=(%2.0f,%2d)"+s, ballX, ballY,
+            ballSpeedX, /*ballSpeedY*/bColorTiming);
       g.drawString(sb.toString(), 20, 30);
    }
-  
+   
+   private void makeColor() {
+   	if (R<255)  
+   		rPhase=rPhase+0.025;
+   	else 
+   		rPhase=0;
+   	
+   	if ((R>=125) && (G<255)) 
+   		gPhase=gPhase+0.025;
+   	else
+   		if (G>254) gPhase=0;
+   	
+   	System.out.println(R+" "+G+" "+B);
+   	R=(int) (Math.abs((Math.sin(rPhase)*255)));
+   	G=(int) (Math.abs((Math.sin(gPhase)*255)));
+   	B=(int) (Math.abs((Math.sin(bPhase)*255)));
+    }
+   
    /** main program (entry point) */
    public static void main(String[] args) {
       // Run GUI in the Event Dispatcher Thread (EDT) instead of main thread.
