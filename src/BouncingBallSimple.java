@@ -22,14 +22,9 @@ public class BouncingBallSimple extends JPanel {
    
    private int R = 0;
    private int G = 0;
-   private int B = 0;
+   private int B = 255;
    private Color bColor= new Color(R,G,B);
-   private double rPhase = 0;
-   private double gPhase = 0;
-   private double bPhase = 0;
-   private int bColorTiming = 0;
-   private String s="";
-   
+   private int cicleCount=1;
   
    private static final int UPDATE_RATE = 30; // Number of refresh per second
   
@@ -96,26 +91,32 @@ public class BouncingBallSimple extends JPanel {
       g.setFont(new Font("Courier New", Font.PLAIN, 12));
       StringBuilder sb = new StringBuilder();
       Formatter formatter = new Formatter(sb);
-      formatter.format("Ball @(%3.0f,%3.0f) Speed=(%2.0f,%2d)"+s, ballX, ballY,
-            ballSpeedX, /*ballSpeedY*/bColorTiming);
+      formatter.format("Ball @(%3.0f,%3.0f) Speed=(%2.0f,%2.0f)  (R:%3d   G:%3d   B:%3d)", ballX, ballY,
+            ballSpeedX, ballSpeedY,R,G,B);
       g.drawString(sb.toString(), 20, 30);
    }
    
    private void makeColor() {
-   	if (R<255)  
-   		rPhase=rPhase+0.025;
-   	else 
-   		rPhase=0;
-   	
-   	if ((R>=125) && (G<255)) 
-   		gPhase=gPhase+0.025;
-   	else
-   		if (G>254) gPhase=0;
-   	
-   	System.out.println(R+" "+G+" "+B);
-   	R=(int) (Math.abs((Math.sin(rPhase)*255)));
-   	G=(int) (Math.abs((Math.sin(gPhase)*255)));
-   	B=(int) (Math.abs((Math.sin(bPhase)*255)));
+   	if (cicleCount>0 && cicleCount<=255) {
+   		B--;
+   		R++;
+   	}
+   	else if (cicleCount>255 && cicleCount<=510) {
+   		R--;
+   		G++;
+   	}
+   	else if (cicleCount>510 && cicleCount<=764) {
+   		G--;
+   		B++;
+   	}
+   	else {
+   		R=0;
+   		G=0;
+   		B=255;
+   		cicleCount=0;
+   	}
+   	//System.out.println("R: "+R+" G: "+G+" B: "+B);
+   	cicleCount++;
     }
    
    /** main program (entry point) */
