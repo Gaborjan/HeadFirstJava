@@ -28,7 +28,7 @@ public class VerySimpleChatServer {
 			String message;
 			try {
 				while ((message=reader.readLine())!=null) {
-					System.out.println("read "+message);
+					System.out.println("Server read "+message);
 					tellEveryone(message);
 				}
 			}
@@ -54,10 +54,12 @@ public class VerySimpleChatServer {
 				t.start();
 				System.out.println("got connection");
 			}
+
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	
 	}//go
 	
 	public void tellEveryone(String message) {

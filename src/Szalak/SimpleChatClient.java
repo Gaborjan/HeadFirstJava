@@ -22,6 +22,7 @@ public class SimpleChatClient {
 	
 	public void go() {
 		JFrame frame=new JFrame("Ludicrously Simple Chat Client");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel mainPanel=new JPanel();
 		incoming=new JTextArea(15,50);
 		incoming.setLineWrap(true);
@@ -43,6 +44,7 @@ public class SimpleChatClient {
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
 		frame.setSize(400, 500);
 		frame.setVisible(true);
+		frame.pack();
 	} //go
 	
 	private void setUpNetworking() {
@@ -71,13 +73,13 @@ public class SimpleChatClient {
 			outgoing.requestFocus();
 		}
 	} //sendButtonListener
-	
+
 	public class IncomingReader implements Runnable {
 		public void run() {
 			String message;
 			try {
 				while((message=reader.readLine())!=null) {
-					System.out.println("read "+message);
+					System.out.println("Client read "+message);
 					incoming.append(message+"\n");
 				}
 			}
